@@ -1,11 +1,14 @@
-
 name: Build & Test
-
-on:
+'on':
   push:
-    branches: [ main ]
+    branches:
+      - "**"
   pull_request:
-    branches: [ main ]
+    branches:
+      - "**"
+  schedule:
+    - cron: 0 16 * * *
+  workflow_dispatch:
 
 jobs:
 
@@ -14,7 +17,7 @@ jobs:
     strategy:
       matrix:
         go: ['1.15', '1.16', '1.17']
-    
+
     steps:
     - uses: actions/checkout@v2
 
