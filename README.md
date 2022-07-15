@@ -266,7 +266,7 @@ This interceptor will take care of encrypting request and decrypting response pa
 #### OpenAPI Generator
 Client libraries can be generated using the following command:
 
-openapi-generator-cli generate -i openapi-spec.yaml -g go -o out
+```openapi-generator-cli generate -i openapi-spec.yaml -g go -o out```
 
 See also:
 * [OpenAPI Generator CLI Installation](https://openapi-generator.tech/docs/installation)
