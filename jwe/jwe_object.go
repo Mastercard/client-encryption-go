@@ -15,6 +15,8 @@ import (
 const (
 	A128CBC_HS256 = "A128CBC-HS256"
 	A256GCM       = "A256GCM"
+	A128GCM	      = "A128GCM"
+	A192GCM       = "A192GCM"
 )
 
 type JWEObject struct {
@@ -63,6 +65,18 @@ func (jweObject JWEObject) Decrypt(config JWEConfig) (string, error) {
 	aad := []byte(jweObject.Aad)
 
 	switch encryptionMethod := jweObject.JoseHeader.Enc; encryptionMethod {
+	case A128GCM:
+		plainText, err := aes_encryption.AesGcmDecrypt(cipherText, cek, nonce, authTag, aad)
+		if err != nil {
+			return "", err
+		}
+		return string(plainText), nil
+	case A192GCM:
+		plainText, err := aes_encryption.AesGcmDecrypt(cipherText, cek, nonce, authTag, aad)
+		if err != nil {
+			return "", err
+		}
+		return string(plainText), nil
 	case A256GCM:
 		plainText, err := aes_encryption.AesGcmDecrypt(cipherText, cek, nonce, authTag, aad)
 		if err != nil {
