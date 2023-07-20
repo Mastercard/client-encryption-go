@@ -6,19 +6,16 @@ import (
 )
 
 type FieldLevelEncryptionConfig struct {
-	encryptionCertificateFingerprint           string
-	oaepPaddingDigestAlgorithm                 string
-	oaepPaddingDigestAlgorithmFieldName        string
-	oaepPaddingDigestAlgorithmHeaderName       string
-	ivFieldName                                string
-	ivHeaderName                               string
-	encryptedKeyFieldName                      string
-	encryptedKeyHeaderName                     string
-	encryptionCertificateFingerprintFieldName  string
-	encryptionCertificateFingerprintHeaderName string
-	encryptionKeyFingerprintFieldName          string
-	encryptionKeyFingerprintHeaderName         string
-	fieldValueEncoding                         string
+	encryptionCertificateFingerprint          string
+	oaepPaddingDigestAlgorithm                string
+	oaepPaddingDigestAlgorithmFieldName       string
+	ivFieldName                               string
+	ivHeaderName                              string
+	encryptedKeyFieldName                     string
+	encryptedKeyHeaderName                    string
+	encryptionCertificateFingerprintFieldName string
+	encryptionKeyFingerprintFieldName         string
+	fieldValueEncoding                        string
 
 	decryptionKey            *rsa.PrivateKey
 	encryptionCertificate    *x509.Certificate
@@ -27,6 +24,30 @@ type FieldLevelEncryptionConfig struct {
 	encryptedValueFieldName  string
 	encryptionPaths          map[string]string
 	decryptionPaths          map[string]string
+}
+
+func (config *FieldLevelEncryptionConfig) GetOaepPaddingDigestAlgorithmFieldName() string {
+	return config.oaepPaddingDigestAlgorithmFieldName
+}
+
+func (config *FieldLevelEncryptionConfig) GetEncryptionCertificateFingerprint() string {
+	return config.encryptionCertificateFingerprint
+}
+
+func (config *FieldLevelEncryptionConfig) GetEncryptionCertificateFingerprintFieldName() string {
+	return config.encryptionCertificateFingerprintFieldName
+}
+
+func (config *FieldLevelEncryptionConfig) GetIvFieldName() string {
+	return config.ivFieldName
+}
+
+func (config *FieldLevelEncryptionConfig) GetEncryptedKeyFieldName() string {
+	return config.encryptedKeyFieldName
+}
+
+func (config *FieldLevelEncryptionConfig) GetEncryptionKeyFingerprintFieldName() string {
+	return config.encryptionKeyFingerprintFieldName
 }
 
 func (config *FieldLevelEncryptionConfig) GetDecryptionKey() *rsa.PrivateKey {

@@ -98,7 +98,7 @@ func (cb *FieldLevelEncryptionConfigBuilder) WithEncryptionKeyFingerprintFieldNa
 
 // TODO aprender a fazer fieldValueEncoding ser enum
 func (cb *FieldLevelEncryptionConfigBuilder) WithFieldValueEncoding(fieldValueEncoding string) *FieldLevelEncryptionConfigBuilder {
-	cb.encryptionKeyFingerprintFieldName = fieldValueEncoding
+	cb.fieldValueEncoding = fieldValueEncoding
 	return cb
 }
 
