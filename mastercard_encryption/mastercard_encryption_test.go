@@ -62,11 +62,11 @@ func TestEncryptPayload(t *testing.T) {
   "issuerSCAExemption": "09"
 }`
 
-	certificatePath := "../testdata/certificates/fraudsubmissionapiClientEnc1689703308.pem"
+	certificatePath := "../testdata/certificates/test_certificate-2048.pem"
 	certificate, err := utils.LoadEncryptionCertificate(certificatePath)
 	assert.Nil(t, err)
 
-	fingerprint := "03688777b9f0074fa6c97adc68488c5898cc8c117fdc74d2a668d70ae381a5d7"
+	fingerprint := "761b003c1eade3a5490e5000d37887baa5e6ec0e226c07706e599451fc032a79"
 
 	cb := field_level_encryption.NewFieldLevelEncryptionConfigBuilder()
 	flConfig := cb.WithEncryptionCertificate(certificate).
