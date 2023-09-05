@@ -80,7 +80,7 @@ func TestEncryptPayload(t *testing.T) {
 		WithOaepPaddingDigestAlgorithmFieldName("oaepPaddingDigestAlgorithm").
 		WithFieldValueEncoding("HEX").
 		Build()
-
-	encryptedPayload := EncryptPayload(payload, flConfig)
+	params := field_level_encryption.Generate(flConfig)
+	encryptedPayload := EncryptPayload(payload, flConfig, params)
 	fmt.Println(encryptedPayload)
 }

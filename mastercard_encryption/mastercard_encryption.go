@@ -7,18 +7,19 @@ import (
 	"github.com/mastercard/client-encryption-go/utils"
 )
 
-func EncryptPayload(payload string, config *field_level_encryption.FieldLevelEncryptionConfig) string {
+func EncryptPayload(payload string, config *field_level_encryption.FieldLevelEncryptionConfig, params *field_level_encryption.FieldLevelEncryptionParams) string {
 	jsonPayload, _ := gabs.ParseJSON([]byte(payload))
 	for jsonPathIn, jsonPathOut := range config.GetEncryptionPaths() {
-		jsonPayload = encryptPayloadPath(jsonPayload, jsonPathIn, jsonPathOut, config)
+		jsonPayload = encryptPayloadPath(jsonPayload, jsonPathIn, jsonPathOut, config, params)
 	}
 	return jsonPayload.String()
 }
 
 func encryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPathOut string,
-	config *field_level_encryption.FieldLevelEncryptionConfig) *gabs.Container {
-
-	params := field_level_encryption.Generate(config)
+	config *field_level_encryption.FieldLevelEncryptionConfig, params *field_level_encryption.FieldLevelEncryptionParams) *gabs.Container {
+	if params == nil {
+		params = field_level_encryption.Generate(config)
+	}
 	encryptedValueBytes, _, _ := aes_encryption.AesCbcEncrypt(jsonPayload.Bytes(), params.SecretKey, params.IvParameterSpec, nil)
 	payload := utils.HexUrlEncode(encryptedValueBytes)
 
@@ -27,10 +28,24 @@ func encryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPath
 	} else {
 		jsonPayload.DeleteP(jsonPathIn)
 	}
-	jsonPayload.Set(payload, config.GetEncryptedValueFieldName())
-	jsonPayload.Set(params.IvValue, config.GetIvFieldName())
-	jsonPayload.Set(params.EncryptedKeyValue, config.GetEncryptedKeyFieldName())
-	jsonPayload.Set(config.GetEncryptionKeyFingerprint(), config.GetEncryptionKeyFingerprintFieldName())
-	jsonPayload.Set(params.OaepPaddingDigestAlgorithmValue, config.GetOaepPaddingDigestAlgorithmFieldName())
+	if !utils.IsNullOrEmpty(config.GetEncryptedValueFieldName()) {
+		jsonPayload.Set(payload, config.GetEncryptedValueFieldName())
+	}
+
+	if !utils.IsNullOrEmpty(config.GetIvFieldName()) {
+		jsonPayload.Set(params.IvValue, config.GetIvFieldName())
+	}
+
+	if !utils.IsNullOrEmpty(config.GetEncryptedKeyFieldName()) {
+		jsonPayload.Set(params.EncryptedKeyValue, config.GetEncryptedKeyFieldName())
+	}
+
+	if !utils.IsNullOrEmpty(config.GetEncryptionKeyFingerprintFieldName()) {
+		jsonPayload.Set(config.GetEncryptionKeyFingerprint(), config.GetEncryptionKeyFingerprintFieldName())
+	}
+
+	if !utils.IsNullOrEmpty(config.GetOaepPaddingDigestAlgorithmFieldName()) {
+		jsonPayload.Set(params.OaepPaddingDigestAlgorithmValue, config.GetOaepPaddingDigestAlgorithmFieldName())
+	}
 	return jsonPayload
 }
