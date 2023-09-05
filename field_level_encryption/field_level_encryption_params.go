@@ -14,12 +14,12 @@ type FieldLevelEncryptionParams struct {
 	IvValue                         string
 	EncryptedKeyValue               string
 	OaepPaddingDigestAlgorithmValue string
-	Config                          FieldLevelEncryptionConfig
+	Config                          *FieldLevelEncryptionConfig
 	SecretKey                       []byte
 	IvParameterSpec                 []byte
 }
 
-func NewFieldLevelEncryptionParams(ivValue string, encryptedKeyValue string, oaepPaddingDigestAlgorithmValue string, config FieldLevelEncryptionConfig) *FieldLevelEncryptionParams {
+func NewFieldLevelEncryptionParams(ivValue string, encryptedKeyValue string, oaepPaddingDigestAlgorithmValue string, config *FieldLevelEncryptionConfig) *FieldLevelEncryptionParams {
 	flep := FieldLevelEncryptionParams{}
 	flep.SymmetricKeySize = 128
 	flep.SymmetricKeyType = "AES"
@@ -32,7 +32,7 @@ func NewFieldLevelEncryptionParams(ivValue string, encryptedKeyValue string, oae
 	return &flep
 }
 
-func Generate(config FieldLevelEncryptionConfig) *FieldLevelEncryptionParams {
+func Generate(config *FieldLevelEncryptionConfig) *FieldLevelEncryptionParams {
 	//// Generate a random IV
 	ivParameterSpec := aes_encryption.GenerateCEK(16 * 8)
 	ivSpecValue := utils.HexUrlEncode(ivParameterSpec)

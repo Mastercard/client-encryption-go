@@ -7,7 +7,7 @@ import (
 	"github.com/mastercard/client-encryption-go/utils"
 )
 
-func EncryptPayload(payload string, config field_level_encryption.FieldLevelEncryptionConfig) string {
+func EncryptPayload(payload string, config *field_level_encryption.FieldLevelEncryptionConfig) string {
 	jsonPayload, _ := gabs.ParseJSON([]byte(payload))
 	for jsonPathIn, jsonPathOut := range config.GetEncryptionPaths() {
 		jsonPayload = encryptPayloadPath(jsonPayload, jsonPathIn, jsonPathOut, config)
@@ -15,7 +15,9 @@ func EncryptPayload(payload string, config field_level_encryption.FieldLevelEncr
 	return jsonPayload.String()
 }
 
-func encryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPathOut string, config field_level_encryption.FieldLevelEncryptionConfig) *gabs.Container {
+func encryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPathOut string,
+	config *field_level_encryption.FieldLevelEncryptionConfig) *gabs.Container {
+
 	params := field_level_encryption.Generate(config)
 	encryptedValueBytes, _, _ := aes_encryption.AesCbcEncrypt(jsonPayload.Bytes(), params.SecretKey, params.IvParameterSpec, nil)
 	payload := utils.HexUrlEncode(encryptedValueBytes)

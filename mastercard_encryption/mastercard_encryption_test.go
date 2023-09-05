@@ -81,6 +81,6 @@ func TestEncryptPayload(t *testing.T) {
 		WithFieldValueEncoding("HEX").
 		Build()
 
-	encryptedPayload := EncryptPayload(payload, *flConfig)
+	encryptedPayload := EncryptPayload(payload, flConfig)
 	fmt.Println(encryptedPayload)
 }
