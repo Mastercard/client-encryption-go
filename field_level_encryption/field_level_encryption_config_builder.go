@@ -56,7 +56,7 @@ func (cb *FieldLevelEncryptionConfigBuilder) WithEncryptionPath(jsonPathIn strin
 	return cb
 }
 
-func (cb *FieldLevelEncryptionConfigBuilder) WithDencryptionPath(jsonPathIn string, jsonPathOut string) *FieldLevelEncryptionConfigBuilder {
+func (cb *FieldLevelEncryptionConfigBuilder) WithDecryptionPath(jsonPathIn string, jsonPathOut string) *FieldLevelEncryptionConfigBuilder {
 	cb.decryptionPaths[jsonPathIn] = jsonPathOut
 	return cb
 }
