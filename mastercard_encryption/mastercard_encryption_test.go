@@ -71,6 +71,7 @@ func TestEncryptPayload(t *testing.T) {
 	cb := field_level_encryption.NewFieldLevelEncryptionConfigBuilder()
 	flConfig := cb.WithEncryptionCertificate(certificate).
 		WithEncryptionPath("$", "$").
+		WithDecryptionPath("encryptedValue", "$").
 		WithOaepPaddingDigestAlgorithm("SHA-256").
 		WithEncryptedValueFieldName("encryptedValue").
 		WithEncryptedKeyFieldName("encryptedKey").
@@ -81,6 +82,10 @@ func TestEncryptPayload(t *testing.T) {
 		WithFieldValueEncoding("HEX").
 		Build()
 	params := field_level_encryption.Generate(flConfig)
+
 	encryptedPayload := EncryptPayload(payload, flConfig, params)
 	fmt.Println(encryptedPayload)
+
+	decryptedPayload := DecryptPayload(encryptedPayload, flConfig, params)
+	fmt.Println(decryptedPayload)
 }

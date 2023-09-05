@@ -49,3 +49,28 @@ func encryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPath
 	}
 	return jsonPayload
 }
+
+func DecryptPayload(encryptedPayload string, config *field_level_encryption.FieldLevelEncryptionConfig, params *field_level_encryption.FieldLevelEncryptionParams) string {
+	jsonPayload, _ := gabs.ParseJSON([]byte(encryptedPayload))
+	for jsonPathIn, jsonPathOut := range config.GetDecryptionPaths() {
+		jsonPayload = decryptPayloadPath(jsonPayload, jsonPathIn, jsonPathOut, params)
+	}
+	return jsonPayload.String()
+}
+
+func decryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPathOut string, params *field_level_encryption.FieldLevelEncryptionParams) *gabs.Container {
+	inJsonObject := jsonPayload.Path(jsonPathIn).Data().(string)
+
+	encryptedvalueBytes := utils.HexUrlDecode(inJsonObject)
+	decryptedValueBytes, _ := aes_encryption.AesCbcDecrypt(encryptedvalueBytes, params.SecretKey, params.IvParameterSpec, nil)
+
+	jsonDecryptedPayload, _ := gabs.ParseJSON(decryptedValueBytes)
+	if jsonPathOut == "$" {
+		jsonPayload = jsonDecryptedPayload
+	} else {
+		jsonPayload.DeleteP(jsonPathIn)
+		jsonPayload.Set(jsonDecryptedPayload, jsonPathOut)
+	}
+	return jsonPayload
+
+}

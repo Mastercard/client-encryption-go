@@ -19,3 +19,8 @@ func Base64UrlDecode(data string) []byte {
 func HexUrlEncode(data []byte) string {
 	return hex.EncodeToString(data)
 }
+
+func HexUrlDecode(data string) []byte {
+	decodedDataBytes, _ := hex.DecodeString(data)
+	return decodedDataBytes
+}
