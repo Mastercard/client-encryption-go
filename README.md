@@ -163,7 +163,7 @@ Output:
 
 #### • Performing JWE Decryption <a name="performing-jwe-decryption"></a>
 
-Call `encryption.decryptPayload` with a JSON response payload and a `JWEConfig` instance.
+Call `encryption.DecryptPayload` with a JSON response payload and a `JWEConfig` instance.
 
 Example using the configuration [above](#configuring-the-jwe-encryption):
 ```go
@@ -244,7 +244,7 @@ Example:
 encryptedPayload := "{" +
     "  \"encryptedData\": \"eyJraWQiOiI3NjFiMDAzYzFlYWRlM….Y+oPYKZEMTKyYcSIVEgtQw\"" +
     "}"
-payload = encryption.decryptPayload(encryptedPayload, config)
+payload = encryption.DecryptPayload(encryptedPayload, config)
 ```
 
 Output:
