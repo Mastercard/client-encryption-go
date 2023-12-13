@@ -63,7 +63,7 @@ func decryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPath
 		jsonPayload = jsonDecryptedPayload
 	} else {
 		jsonPayload.DeleteP(jsonPathIn)
-		jsonPayload.Set(jsonDecryptedPayload, jsonPathOut)
+		jsonPayload.Set(jsonDecryptedPayload, strings.Split(jsonPathOut, ".")...)
 	}
 
 	return jsonPayload

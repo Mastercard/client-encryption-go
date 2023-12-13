@@ -121,8 +121,8 @@ import "github.com/mastercard/client-encryption-go/jwe"
 cb := jwe.NewJWEConfigBuilder()
 config := cb.WithDecryptionKey(decryptionKey).
     WithCertificate(encryptionCertificate).
-    WithEncryptionPath("$.path.to.foo", "$.path.to.encryptedFoo").
-    WithDecryptionPath("$.path.to.encryptedFoo.encryptedData", "$.path.to.foo").
+    WithEncryptionPath("path.to.foo", "path.to.encryptedFoo").
+    WithDecryptionPath("path.to.encryptedFoo.encryptedData", "path.to.foo").
     WithEncryptedValueFieldName("encryptedData").
     Build()
 ```
