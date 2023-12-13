@@ -122,7 +122,7 @@ cb := jwe.NewJWEConfigBuilder()
 config := cb.WithDecryptionKey(decryptionKey).
     WithCertificate(encryptionCertificate).
     WithEncryptionPath("path.to.foo", "path.to.encryptedFoo").
-    WithDecryptionPath("path.to.encryptedFoo.encryptedData", "path.to.foo").
+    WithDecryptionPath("path.to.encryptedFoo", "path.to.foo").
     WithEncryptedValueFieldName("encryptedData").
     Build()
 ```
