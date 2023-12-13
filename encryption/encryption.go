@@ -49,7 +49,7 @@ func encryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPath
 }
 
 func decryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPathOut string, config jwe.JWEConfig) *gabs.Container {
-	inJsonObject := jsonPayload.Path(jsonPathIn).Data().(string)
+	inJsonObject := jsonPayload.Path(jsonPathIn + "." + config.GetEncryptedValueFieldName()).Data().(string)
 	jweObject, err := jwe.ParseJWEObject(inJsonObject)
 	if err != nil {
 		panic(err)
