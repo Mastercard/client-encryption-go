@@ -3,6 +3,7 @@ package encryption
 import (
 	"github.com/Jeffail/gabs/v2"
 	"github.com/mastercard/client-encryption-go/jwe"
+	"strings"
 )
 
 func EncryptPayload(payload string, config jwe.JWEConfig) string {
@@ -29,7 +30,7 @@ func encryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPath
 		Cty: "application/json",
 	}
 
-	payload, err := jwe.Encrypt(config, jsonPayload.String(), joseHeader)
+	payload, err := jwe.Encrypt(config, jsonPayload.Path(jsonPathIn).String(), joseHeader)
 	if err != nil {
 		panic(err)
 	}
@@ -39,7 +40,11 @@ func encryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPath
 	} else {
 		jsonPayload.DeleteP(jsonPathIn)
 	}
-	jsonPayload.Set(payload, config.GetEncryptedValueFieldName())
+
+	jsonPathOut = jsonPathOut + "." + config.GetEncryptedValueFieldName()
+
+	jsonPayload.Set(payload, strings.Split(jsonPathOut, ".")...)
+
 	return jsonPayload
 }
 
