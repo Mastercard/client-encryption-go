@@ -33,7 +33,7 @@ func TestEncryptDecryptPayloadWithRootLevelEncryption(t *testing.T) {
 		WithDecryptionKey(decryptionKey).
 		WithEncryptionPath("$", "$").
 		WithDecryptionPath("$", "$").
-		WithOaepPaddingDigestAlgorithm("SHA-256").
+		WithOaepPaddingDigestAlgorithm("SHA256").
 		WithEncryptedValueFieldName("encryptedValue").
 		WithEncryptedKeyFieldName("encryptedKey").
 		WithIvFieldName("iv").
@@ -68,7 +68,7 @@ func TestEncryptDecryptPayloadWithRootLevelArrayEncryption(t *testing.T) {
 		WithDecryptionKey(decryptionKey).
 		WithEncryptionPath("$", "$").
 		WithDecryptionPath("$", "$").
-		WithOaepPaddingDigestAlgorithm("SHA-256").
+		WithOaepPaddingDigestAlgorithm("SHA256").
 		WithEncryptedValueFieldName("encryptedValue").
 		WithEncryptedKeyFieldName("encryptedKey").
 		WithIvFieldName("iv").
@@ -110,7 +110,7 @@ func TestEncryptDecryptPayloadWithHex(t *testing.T) {
 		WithDecryptionKey(decryptionKey).
 		WithEncryptionPath("privateData.sensitiveData", "privateData.encryptedData").
 		WithDecryptionPath("privateData.encryptedData", "privateData.sensitiveData").
-		WithOaepPaddingDigestAlgorithm("SHA-256").
+		WithOaepPaddingDigestAlgorithm("SHA256").
 		WithEncryptedValueFieldName("encryptedValue").
 		WithEncryptedKeyFieldName("encryptedKey").
 		WithIvFieldName("iv").
@@ -152,7 +152,7 @@ func TestEncryptDecryptPayloadWithBase64(t *testing.T) {
 		WithDecryptionKey(decryptionKey).
 		WithEncryptionPath("privateData.sensitiveData", "privateData.encryptedData").
 		WithDecryptionPath("privateData.encryptedData", "privateData.sensitiveData").
-		WithOaepPaddingDigestAlgorithm("SHA-256").
+		WithOaepPaddingDigestAlgorithm("SHA256").
 		WithEncryptedValueFieldName("encryptedValue").
 		WithEncryptedKeyFieldName("encryptedKey").
 		WithIvFieldName("iv").

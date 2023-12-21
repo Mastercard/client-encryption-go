@@ -97,7 +97,7 @@ func decryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPath
 	decodedKey := utils.DecodeData(secretKey, config.GetFieldValueEncoding())
 
 	var decryptedKey []byte
-	if config.GetOaepPaddingDigestAlgorithm() == "SHA-256" {
+	if config.GetOaepPaddingDigestAlgorithm() == "SHA256" {
 		decryptedKey, _ = rsa.DecryptOAEP(sha256.New(), rand.Reader, config.GetDecryptionKey(), decodedKey, nil)
 	} else {
 		decryptedKey, _ = rsa.DecryptOAEP(sha512.New(), rand.Reader, config.GetDecryptionKey(), decodedKey, nil)

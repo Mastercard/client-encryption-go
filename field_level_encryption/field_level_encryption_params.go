@@ -46,7 +46,7 @@ func Generate(config FieldLevelEncryptionConfig) *FieldLevelEncryptionParams {
 
 	//Encrypt the secret key
 	var encryptedKey []byte
-	if oaepPaddingDigestAlgorithm == "SHA-256" {
+	if oaepPaddingDigestAlgorithm == "SHA256" {
 		encryptedKey, _ = rsa.EncryptOAEP(sha256.New(), rand.Reader, config.GetEncryptionCertificate().PublicKey.(*rsa.PublicKey), secretKey, nil)
 	} else {
 		encryptedKey, _ = rsa.EncryptOAEP(sha512.New(), rand.Reader, config.GetEncryptionCertificate().PublicKey.(*rsa.PublicKey), secretKey, nil)
