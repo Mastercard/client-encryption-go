@@ -26,6 +26,13 @@ type FieldLevelEncryptionConfig struct {
 	decryptionPaths          map[string]string
 }
 
+const (
+	SHA256 = "SHA256"
+	SHA512 = "SHA512"
+	HEX    = "HEX"
+	BASE64 = "BASE64"
+)
+
 func (config *FieldLevelEncryptionConfig) GetOaepPaddingDigestAlgorithmFieldName() string {
 	return config.oaepPaddingDigestAlgorithmFieldName
 }

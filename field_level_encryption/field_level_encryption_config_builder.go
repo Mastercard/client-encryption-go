@@ -2,7 +2,10 @@ package field_level_encryption
 
 import (
 	"crypto/rsa"
+	"crypto/sha256"
 	"crypto/x509"
+	"encoding/hex"
+	"errors"
 )
 
 type FieldLevelEncryptionConfigBuilder struct {
@@ -101,7 +104,35 @@ func (cb *FieldLevelEncryptionConfigBuilder) WithFieldValueEncoding(fieldValueEn
 	return cb
 }
 
-func (cb *FieldLevelEncryptionConfigBuilder) Build() *FieldLevelEncryptionConfig {
+func (cb *FieldLevelEncryptionConfigBuilder) Build() (*FieldLevelEncryptionConfig, error) {
+	if len(cb.oaepPaddingDigestAlgorithm) == 0 {
+		return nil, errors.New("the digest algorithm for OAEP must be set")
+	}
+
+	if cb.oaepPaddingDigestAlgorithm != "SHA256" && cb.oaepPaddingDigestAlgorithm != "SHA512" {
+		return nil, errors.New("unsupported OAEP digest algorithm")
+	}
+
+	if len(cb.fieldValueEncoding) == 0 {
+		return nil, errors.New("field value encoding must be set")
+	}
+
+	if len(cb.ivFieldName) == 0 {
+		return nil, errors.New("iv field name must be set")
+	}
+
+	if len(cb.encryptedKeyFieldName) == 0 {
+		return nil, errors.New("encrypted key field name must be set")
+	}
+
+	if len(cb.encryptedValueFieldName) == 0 {
+		return nil, errors.New("encrypted value field name must be set")
+	}
+
+	if len(cb.encryptionCertificateFingerprint) == 0 {
+		cb.encryptionCertificateFingerprint = computeCertificateFingerprint(cb.encryptionCertificate)
+	}
+
 	return &FieldLevelEncryptionConfig{
 		encryptionCertificateFingerprintFieldName: cb.encryptionCertificateFingerprintFieldName,
 		encryptionKeyFingerprintFieldName:         cb.encryptionKeyFingerprintFieldName,
@@ -117,5 +148,10 @@ func (cb *FieldLevelEncryptionConfigBuilder) Build() *FieldLevelEncryptionConfig
 		encryptedKeyFieldName:                     cb.encryptedKeyFieldName,
 		fieldValueEncoding:                        cb.fieldValueEncoding,
 		encryptedValueFieldName:                   cb.encryptedValueFieldName,
-	}
+	}, nil
+}
+
+func computeCertificateFingerprint(cert *x509.Certificate) string {
+	fingerprint := sha256.Sum256(cert.Raw)
+	return hex.EncodeToString(fingerprint[:])
 }
