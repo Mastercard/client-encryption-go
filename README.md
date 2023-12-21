@@ -5,9 +5,9 @@
 - [Overview](#overview)
     * [Compatibility](#compatibility)
     * [References](#references)
-- [Usage](#usage)
+- [Usage](#library-usage)
     * [Prerequisites](#prerequisites)
-    * [Adding the Libraries to Your Project](#adding-the-libraries-to-your-project)
+    * [Installation](#installation)
     * [Loading the Encryption Certificate](#loading-the-encryption-certificate)
     * [Loading the Decryption Key](#loading-the-decryption-key)
     * [Performing Payload Encryption and Decryption](#performing-payload-encryption-and-decryption)
@@ -22,7 +22,8 @@ Go 1.15+
 ### References <a name="references"></a>
 * [Securing Sensitive Data Using Payload Encryption](https://developer.mastercard.com/platform/documentation/security-and-authentication/securing-sensitive-data-using-payload-encryption/)
 
-## Usage <a name="usage"></a>
+## Usage <a name="library-usage"></a>
+
 ### Prerequisites <a name="prerequisites"></a>
 Before using this library, you will need to set up a project in the [Mastercard Developers Portal](https://developer.mastercard.com).
 
