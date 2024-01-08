@@ -1,5 +1,8 @@
 package utils
 
+import "strings"
+
 func IsNullOrEmpty(str string) bool {
-	return str == ""
+	s := strings.ReplaceAll(str, " ", "")
+	return s == ""
 }

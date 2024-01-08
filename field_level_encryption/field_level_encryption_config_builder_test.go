@@ -202,3 +202,30 @@ func TestConfigBuildWithNoEncryptedValueFieldName(t *testing.T) {
 
 	assert.True(t, configError.Error() == "encrypted value field name must be set")
 }
+
+func TestConfigBuildWithIncorrectFieldValueEncoding(t *testing.T) {
+	decryptionKeyPath := "../testdata/keys/pkcs8/test_key_pkcs8-2048.der"
+	certificatePath := "../testdata/certificates/test_certificate-2048.der"
+
+	decryptionKey, err := utils.LoadUnencryptedDecryptionKey(decryptionKeyPath)
+	assert.Nil(t, err)
+	certificate, err := utils.LoadEncryptionCertificate(certificatePath)
+	assert.Nil(t, err)
+
+	cb := field_level_encryption.NewFieldLevelEncryptionConfigBuilder()
+
+	_, configError := cb.WithEncryptionCertificate(certificate).
+		WithDecryptionKey(decryptionKey).
+		WithEncryptionPath("privateData.sensitiveData", "privateData.encryptedData").
+		WithDecryptionPath("privateData.encryptedData", "privateData.sensitiveData").
+		WithOaepPaddingDigestAlgorithm(field_level_encryption.SHA512).
+		WithEncryptedValueFieldName("encryptedValue").
+		WithEncryptedKeyFieldName("encryptedKey").
+		WithIvFieldName("iv").
+		WithEncryptionKeyFingerprintFieldName("publicKeyFingerprint").
+		WithOaepPaddingDigestAlgorithmFieldName("oaepPaddingDigestAlgorithm").
+		WithFieldValueEncoding("ASCII").
+		Build()
+
+	assert.True(t, configError.Error() == "field value encoding must be either 'BASE64' or 'HEX'")
+}

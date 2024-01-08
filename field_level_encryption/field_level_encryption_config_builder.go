@@ -117,6 +117,10 @@ func (cb *FieldLevelEncryptionConfigBuilder) Build() (*FieldLevelEncryptionConfi
 		return nil, errors.New("field value encoding must be set")
 	}
 
+	if cb.fieldValueEncoding != "BASE64" && cb.fieldValueEncoding != "HEX" {
+		return nil, errors.New("field value encoding must be either 'BASE64' or 'HEX'")
+	}
+
 	if len(cb.ivFieldName) == 0 {
 		return nil, errors.New("iv field name must be set")
 	}
