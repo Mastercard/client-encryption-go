@@ -3,7 +3,7 @@ package jwe_test
 import (
 	"testing"
 
-	"github.com/mastercard/client-encryption-go/jwe"
+	"github.com/Duong2903/client-encryption-go/jwe"
 	"github.com/stretchr/testify/assert"
 )
 

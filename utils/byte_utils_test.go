@@ -5,7 +5,7 @@ import (
 	"testing"
 	"testing/quick"
 
-	"github.com/mastercard/client-encryption-go/utils"
+	"github.com/Duong2903/client-encryption-go/utils"
 	"github.com/stretchr/testify/assert"
 )
 

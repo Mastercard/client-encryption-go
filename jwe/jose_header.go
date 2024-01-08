@@ -3,7 +3,7 @@ package jwe
 import (
 	"encoding/json"
 
-	"github.com/mastercard/client-encryption-go/utils"
+	"github.com/Duong2903/client-encryption-go/utils"
 )
 
 type JOSEHeader struct {

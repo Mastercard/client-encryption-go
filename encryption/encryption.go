@@ -1,8 +1,8 @@
 package encryption
 
 import (
+	"github.com/Duong2903/client-encryption-go/jwe"
 	"github.com/Jeffail/gabs/v2"
-	"github.com/mastercard/client-encryption-go/jwe"
 	"strings"
 )
 

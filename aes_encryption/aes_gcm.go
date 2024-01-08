@@ -4,7 +4,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 
-	"github.com/mastercard/client-encryption-go/utils"
+	"github.com/Duong2903/client-encryption-go/utils"
 )
 
 // AES-GCM Decryption

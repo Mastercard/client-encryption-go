@@ -3,9 +3,9 @@ package encryption_test
 import (
 	"testing"
 
-	"github.com/mastercard/client-encryption-go/encryption"
-	"github.com/mastercard/client-encryption-go/jwe"
-	"github.com/mastercard/client-encryption-go/utils"
+	"github.com/Duong2903/client-encryption-go/encryption"
+	"github.com/Duong2903/client-encryption-go/jwe"
+	"github.com/Duong2903/client-encryption-go/utils"
 	"github.com/stretchr/testify/assert"
 )
 

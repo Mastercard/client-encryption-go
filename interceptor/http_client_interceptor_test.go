@@ -1,8 +1,8 @@
 package interceptor_test
 
 import (
-	"github.com/mastercard/client-encryption-go/interceptor"
-	"github.com/mastercard/client-encryption-go/jwe"
+	"github.com/Duong2903/client-encryption-go/interceptor"
+	"github.com/Duong2903/client-encryption-go/jwe"
 	"testing"
 )
 

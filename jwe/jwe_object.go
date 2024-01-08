@@ -8,14 +8,14 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/mastercard/client-encryption-go/aes_encryption"
-	"github.com/mastercard/client-encryption-go/utils"
+	"github.com/Duong2903/client-encryption-go/aes_encryption"
+	"github.com/Duong2903/client-encryption-go/utils"
 )
 
 const (
 	A128CBC_HS256 = "A128CBC-HS256"
 	A256GCM       = "A256GCM"
-	A128GCM	      = "A128GCM"
+	A128GCM       = "A128GCM"
 	A192GCM       = "A192GCM"
 )
 

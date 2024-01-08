@@ -35,13 +35,13 @@ As part of this set up, you'll receive:
 
 ####
 ```go
-import github.com/mastercard/client-encryption-go
+import github.com/Duong2903/client-encryption-go
 ```
 
 ### Loading the Encryption Certificate <a name="loading-the-encryption-certificate"></a>
 A `Certificate` can be created by calling the `utils.LoadSigningKey` function:
 ```go
-import "github.com/mastercard/client-encryption-go/utils"
+import "github.com/Duong2903/client-encryption-go/utils"
 
 //…
 encryptionCertificate, err := utils.LoadEncryptionCertificate("<insert certificate file path>")
@@ -56,7 +56,7 @@ Supported certificate formats: PEM, DER.
 
 A `PrivateKey` can be created from a PKCS#12 key store by calling `utils.LoadDecryptionKey` the following way:
 ```go
-import "github.com/mastercard/client-encryption-go/utils"
+import "github.com/Duong2903/client-encryption-go/utils"
 
 //…
 decryptionKey, err := utils.LoadDecryptionKey(
@@ -69,7 +69,7 @@ decryptionKey, err := utils.LoadDecryptionKey(
 
 A `PrivateKey` can be created from an unencrypted key file by calling `utils.LoadUnencryptedDecryptionKey` the following way:
 ```go
-import "github.com/mastercard/client-encryption-go/utils"
+import "github.com/Duong2903/client-encryption-go/utils"
 
 //…
 decryptionKey, err := utils.LoadUnencryptedDecryptionKey("<insert key file path>")
@@ -97,7 +97,7 @@ The core methods responsible for payload encryption and decryption are `EncryptP
 
 * `encryptPayload` usage:
 ```go
-import "github.com/mastercard/client-encryption-go/encryption"
+import "github.com/Duong2903/client-encryption-go/encryption"
 // …
 
 encryptedPayload := encryption.EncryptPayload(payload, *config)
@@ -105,7 +105,7 @@ encryptedPayload := encryption.EncryptPayload(payload, *config)
 
 * `decryptPayload` usage:
 ```go
-import "github.com/mastercard/client-encryption-go/encryption"
+import "github.com/Duong2903/client-encryption-go/encryption"
 // …
 
 decryptedPayload := encryption.DecryptPayload(payload, *config)
@@ -115,7 +115,7 @@ decryptedPayload := encryption.DecryptPayload(payload, *config)
 
 Use the `JWEConfigBuilder` to create `JWEConfig` instances. Example:
 ```go
-import "github.com/mastercard/client-encryption-go/jwe"
+import "github.com/Duong2903/client-encryption-go/jwe"
 // …
 
 cb := jwe.NewJWEConfigBuilder()
@@ -124,7 +124,7 @@ config := cb.WithDecryptionKey(decryptionKey).
     WithEncryptionPath("path.to.foo", "path.to.encryptedFoo").
     WithDecryptionPath("path.to.encryptedFoo", "path.to.foo").
     WithEncryptedValueFieldName("encryptedData").
-    Build()
+    Build()                                                                                                                                                                                                                       
 ```
 
 #### • Performing JWE Encryption <a name="performing-jwe-encryption"></a>
@@ -198,7 +198,7 @@ Output:
 Entire payloads can be encrypted using the "$" operator as encryption path:
 
 ```go
-import "github.com/mastercard/client-encryption-go/jwe"
+import "github.com/Duong2903/client-encryption-go/jwe"
 // …
 
 cb := jwe.NewJWEConfigBuilder()
@@ -229,7 +229,7 @@ Output:
 Entire payloads can be decrypted using the "$" operator as decryption path:
 
 ```go
-import "github.com/mastercard/client-encryption-go/jwe"
+import "github.com/Duong2903/client-encryption-go/jwe"
 // …
 
 cb := jwe.NewJWEConfigBuilder()
@@ -283,7 +283,7 @@ Requests can be encrypted, with OAuth authentication as follows:
 ```go
 import (
     oauth "github.com/mastercard/oauth1-signer-go"
-    "github.com/mastercard/client-encryption-go/interceptor"
+    "github.com/Duong2903/client-encryption-go/interceptor"
 )
 
 cb := jwe.NewJWEConfigBuilder()
@@ -313,7 +313,7 @@ Requests can be encrypted, without authentication as follows:
 
 ```go
 import (
-    "github.com/mastercard/client-encryption-go/interceptor"
+    "github.com/Duong2903/client-encryption-go/interceptor"
 )
 
 cb := jwe.NewJWEConfigBuilder()
