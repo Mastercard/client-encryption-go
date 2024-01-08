@@ -5,25 +5,25 @@
 - [Overview](#overview)
     * [Compatibility](#compatibility)
     * [References](#references)
-- [Usage](#usage)
+- [Usage](#library-usage)
     * [Prerequisites](#prerequisites)
-    * [Adding the Libraries to Your Project](#adding-the-libraries-to-your-project)
+    * [Installation](#installation)
     * [Loading the Encryption Certificate](#loading-the-encryption-certificate)
     * [Loading the Decryption Key](#loading-the-decryption-key)
     * [Performing Payload Encryption and Decryption](#performing-payload-encryption-and-decryption)
     * [Integrating with OpenAPI Generator API Client Libraries](#integrating-with-openapi-generator-api-client-libraries)
 
 ## Overview <a name="overview"></a>
-Library for Mastercard API compliant JWE payload encryption/decryption.
+Library for Mastercard API compliant payload encryption/decryption.
 
 ### Compatibility <a name="compatibility"></a>
 Go 1.15+
 
 ### References <a name="references"></a>
-* [JSON Web Encryption (JWE)](https://datatracker.ietf.org/doc/html/rfc7516)
 * [Securing Sensitive Data Using Payload Encryption](https://developer.mastercard.com/platform/documentation/security-and-authentication/securing-sensitive-data-using-payload-encryption/)
 
-## Usage <a name="usage"></a>
+## Usage <a name="library-usage"></a>
+
 ### Prerequisites <a name="prerequisites"></a>
 Before using this library, you will need to set up a project in the [Mastercard Developers Portal](https://developer.mastercard.com).
 
@@ -81,16 +81,23 @@ Supported RSA key formats:
 * PKCS#8 PEM (starts with "-----BEGIN PRIVATE KEY-----")
 * Binary DER-encoded PKCS#8
 
-### Performing Payload Encryption and Decryption <a name="performing-jwe-payload-encryption-and-decryption"></a>
+### Performing Payload Encryption and Decryption <a name="performing-payload-encryption-and-decryption"></a>
 
-+ [Introduction](#introduction)
+This library supports two types of encryption/decryption, both of which support field level and entire payload encryption: JWE encryption and what the library refers to as Field Level Encryption (Mastercard encryption), a scheme used by many services hosted on Mastercard Developers before the library added support for JWE.
+
++ [JWE Encryption and Decryption](#jwe-encryption-and-decryption)
++ [Mastercard Encryption and Decryption](#mastercard-encryption-and-decryption)
+
+#### JWE Encryption and Decryption <a name="jwe-encryption-and-decryption"></a>
+
++ [Introduction](#jwe-introduction)
 + [Configuring the JWE Encryption](#configuring-the-jwe-encryption)
 + [Performing JWE Encryption](#performing-jwe-encryption)
 + [Performing JWE Decryption](#performing-jwe-decryption)
 + [Encrypting Entire Payloads](#encrypting-entire-payloads-jwe)
 + [Decrypting Entire Payloads](#decrypting-entire-payloads-jwe)
 
-#### • Introduction <a name="introduction"></a>
+##### Introduction <a name="jwe-introduction"></a>
 
 This library uses [JWE compact serialization](https://datatracker.ietf.org/doc/html/rfc7516#section-7.1) for the encryption of sensitive data.
 The core methods responsible for payload encryption and decryption are `EncryptPayload` and `DecryptPayload` in the `encryption` package.
@@ -163,7 +170,7 @@ Output:
 
 #### • Performing JWE Decryption <a name="performing-jwe-decryption"></a>
 
-Call `encryption.decryptPayload` with a JSON response payload and a `JWEConfig` instance.
+Call `encryption.DecryptPayload` with a JSON response payload and a `JWEConfig` instance.
 
 Example using the configuration [above](#configuring-the-jwe-encryption):
 ```go
@@ -255,6 +262,127 @@ Output:
 }
 ```
 
+#### Mastercard Encryption and Decryption <a name="mastercard-encryption-and-decryption"></a>
+
++ [Introduction](#mastercard-introduction)
++ [Configuring the Mastercard Encryption](#configuring-the-mastercard-encryption)
++ [Performing Mastercard Encryption](#performing-mastercard-encryption)
++ [Performing Mastercard Decryption](#performing-mastercard-decryption)
+
+##### Introduction <a name="mastercard-introduction"></a>
+
+The core methods responsible for payload encryption and decryption are `EncryptPayload` and `DecryptPayload` in the `mastercard_encryption` package.
+
+* `encryptPayload` usage:
+```go
+import "github.com/mastercard/client-encryption-go/mastercard_encryption"
+// …
+
+encryptedPayload := encryption.EncryptPayload(payload, *config)
+```
+
+* `decryptPayload` usage:
+```go
+import "github.com/mastercard/client-encryption-go/mastercard_encryption"
+// …
+
+decryptedPayload := encryption.DecryptPayload(payload, *config)
+```
+
+#### • Configuring the Mastercard Encryption <a name="#configuring-the-mastercard-encryption"></a>
+
+Use the `FieldLevelEncryptionConfigBuilder` to create `FieldLevelEncryptionConfig` instances. Example:
+```go
+import "github.com/mastercard/client-encryption-go/field_level_encryption"
+// …
+
+cb := field_level_encryption.NewFieldLevelEncryptionConfigBuilder()
+config, err := cb.WithDecryptionKey(decryptionKey).
+    WithCertificate(encryptionCertificate).
+    WithEncryptionPath("$.path.to.foo", "$.path.to.encryptedFoo").
+    WithDecryptionPath("$.path.to.encryptedFoo.encryptedData", "$.path.to.foo").
+    WithEncryptedValueFieldName("encryptedData").
+    WithEncryptedKeyFieldName("encryptedKey").
+    WithIvFieldName("iv").
+    WithFieldValueEncoding(field_level_encryption.HEX).
+    WithOaepPaddingDigestAlgorithm(field_level_encryption.SHA256).
+    Build()
+```
+
+##### Performing Mastercard Encryption <a name="performing-mastercard-encryption"></a>
+
+Call `mastercard_encryption.EncryptPayload` with a JSON request payload and a `FieldLevelEncryptionConfig` instance.
+
+Example using the configuration [above](#configuring-the-mastercard-encryption):
+```go
+//…
+payload := "{" +
+    "    \"path\": {" +
+    "        \"to\": {" +
+    "            \"foo\": {" +
+    "                \"sensitiveField1\": \"sensitiveValue1\"," +
+    "                \"sensitiveField2\": \"sensitiveValue2\"" +
+    "            }" +
+    "        }" +
+    "    }" +
+    "}"
+encryptedPayload := mastercard_encryption.EncryptPayload(payload, config)
+//…
+```
+
+Output:
+```json
+{
+  "path": {
+    "to": {
+      "encryptedFoo": {
+        "iv": "7f1105fb0c684864a189fb3709ce3d28",
+        "encryptedKey": "67f467d1b653d98411a0c6d3c…ffd4c09dd42f713a51bff2b48f937c8",
+        "encryptedData": "b73aabd267517fc09ed72455c2…dffb5fa04bf6e6ce9ade1ff514ed6141",
+        "publicKeyFingerprint": "80810fc13a8319fcf0e2e…82cc3ce671176343cfe8160c2279",
+        "oaepHashingAlgorithm": "SHA256"
+      }
+    }
+  }
+}
+```
+
+##### Performing Mastercard Decryption <a name="performing-mastercard-decryption"></a>
+
+Call `mastercard_encryption.DecryptPayload` with a JSON response payload and a `FieldLevelEncryptionConfig` instance.
+
+Example using the configuration [above](#configuring-the-mastercard-encryption):
+```go
+response := "{" +
+    "    \"path\": {" +
+    "        \"to\": {" +
+    "            \"encryptedFoo\": {" +
+    "               \"iv\": \"e5d313c056c411170bf07ac82ede78c9\"," +
+	"               \"encryptedKey": "e3a56746c0f9109d18b3a2652b76…f16d8afeff36b2479652f5c24ae7bd\"," +
+    "               \"encryptedData\": \"809a09d78257af5379df0c454dcdf…353ed59fe72fd4a7735c69da4080e74f\"," +
+    "               \"oaepHashingAlgorithm\": \"SHA256\"," +
+    "               \"publicKeyFingerprint\": \"80810fc13a8319fcf0e2e…3ce671176343cfe8160c2279\"" +
+    "            }" +
+    "        }" +
+    "    }" +
+    "}"
+decryptedPayload := encryption.DecryptPayload(response, config)
+```
+
+Output:
+```json
+{
+    "path": {
+        "to": {
+            "foo": {
+                "sensitiveField1": "sensitiveValue1",
+                "sensitiveField2": "sensitiveValue2"
+            }
+        }
+    }
+}
+```
+
 ### Integrating with OpenAPI Generator API Client Libraries <a name="integrating-with-openapi-generator-api-client-libraries"></a>
 
 [OpenAPI Generator](https://github.com/OpenAPITools/openapi-generator) generates API client libraries from [OpenAPI Specs](https://github.com/OAI/OpenAPI-Specification).
@@ -307,28 +435,3 @@ serviceApi := apiClient.ServiceApi
 
 See also:
 * [Mastercard OAuth Signer Library](https://github.com/Mastercard/oauth1-signer-go)
-
-#### Encryption without Authentication
-Requests can be encrypted, without authentication as follows:
-
-```go
-import (
-    "github.com/mastercard/client-encryption-go/interceptor"
-)
-
-cb := jwe.NewJWEConfigBuilder()
-jweConfig := cb.WithDecryptionKey(decryptionKey).
-    WithCertificate(encryptionCertificate).
-    WithEncryptionPath("$", "$").
-	// …
-	Build()
-
-configuration := openapi.NewConfiguration()
-
-encryptionClient, _ := interceptor.GetHttpClient(*jweConfig, nil)
-configuration.HTTPClient = encryptionClient
-apiClient := openapi.NewAPIClient(configuration)
-
-serviceApi := apiClient.ServiceApi
-// …
-```
