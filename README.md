@@ -5,6 +5,7 @@
 - [Overview](#overview)
     * [Compatibility](#compatibility)
     * [References](#references)
+    * [Versioning and Deprecation Policy](#versioning)
 - [Usage](#library-usage)
     * [Prerequisites](#prerequisites)
     * [Installation](#installation)
@@ -21,6 +22,9 @@ Go 1.15+
 
 ### References <a name="references"></a>
 * [Securing Sensitive Data Using Payload Encryption](https://developer.mastercard.com/platform/documentation/security-and-authentication/securing-sensitive-data-using-payload-encryption/)
+
+### Versioning and Deprecation Policy <a name="versioning"></a>
+* [Mastercard Versioning and Deprecation Policy](https://github.com/Mastercard/.github/blob/main/CLIENT_LIBRARY_DEPRECATION_POLICY.md)
 
 ## Usage <a name="library-usage"></a>
 
