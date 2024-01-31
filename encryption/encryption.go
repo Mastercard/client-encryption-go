@@ -3,7 +3,7 @@ package encryption
 import (
 	"github.com/Jeffail/gabs/v2"
 	"github.com/mastercard/client-encryption-go/jwe"
-	"strings"
+	"github.com/mastercard/client-encryption-go/utils"
 )
 
 func EncryptPayload(payload string, config jwe.JWEConfig) string {
@@ -32,9 +32,9 @@ func encryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPath
 		Kid: config.GetEncryptionKeyFingerprint(),
 		Cty: "application/json",
 	}
-	jsonPathIn = removeJsonRoot(jsonPathIn)
-	jsonPathOut = removeJsonRoot(jsonPathOut)
-	payloadToEncrypt := getPayloadToEncrypt(jsonPayload, jsonPathIn)
+	jsonPathIn = utils.RemoveRoot(jsonPathIn)
+	jsonPathOut = utils.RemoveRoot(jsonPathOut)
+	payloadToEncrypt := utils.GetPayloadToEncrypt(jsonPayload, jsonPathIn)
 	payload, err := jwe.Encrypt(config, payloadToEncrypt, joseHeader)
 	if err != nil {
 		panic(err)
@@ -47,18 +47,15 @@ func encryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPath
 	if jsonPathOut == "$" {
 		jsonPayload.SetP(payload, config.GetEncryptedValueFieldName())
 	} else {
-		if jsonPathOut[0] == '$' {
-			jsonPathOut = jsonPathOut[2:]
-		}
 		jsonPayload.SetP(payload, jsonPathOut+"."+config.GetEncryptedValueFieldName())
 	}
 	return jsonPayload
 }
 
 func decryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPathOut string, config jwe.JWEConfig) *gabs.Container {
-	jsonPathIn = removeJsonRoot(jsonPathIn)
-	jsonPathOut = removeJsonRoot(jsonPathOut)
-	encryptedPayload := getPayloadToDecrypt(jsonPayload, jsonPathIn)
+	jsonPathIn = utils.RemoveRoot(jsonPathIn)
+	jsonPathOut = utils.RemoveRoot(jsonPathOut)
+	encryptedPayload := utils.GetPayloadToDecrypt(jsonPayload, jsonPathIn)
 	jweObject, err := jwe.ParseJWEObject(encryptedPayload)
 	if err != nil {
 		panic(err)
@@ -71,43 +68,8 @@ func decryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPath
 	if jsonPathOut == "$" {
 		jsonPayload = jsonDecryptedPayload
 	} else {
-		if jsonPathOut[0] == '$' {
-			jsonPathOut = jsonPathOut[2:]
-		}
-		jsonPayload.DeleteP(getParent(jsonPathIn))
+		jsonPayload.DeleteP(utils.GetParent(jsonPathIn))
 		jsonPayload.SetP(jsonDecryptedPayload, jsonPathOut)
 	}
 	return jsonPayload
-}
-
-func getPayloadToEncrypt(jsonPayload *gabs.Container, jsonPathIn string) string {
-	if jsonPathIn == "$" {
-		return jsonPayload.String()
-	} else {
-		return jsonPayload.Path(jsonPathIn).String()
-	}
-}
-
-func getPayloadToDecrypt(jsonPayload *gabs.Container, jsonPathIn string) string {
-	if jsonPathIn == "$" {
-		return jsonPayload.
-			Children()[0].
-			Data().(string)
-	} else {
-		return jsonPayload.Path(jsonPathIn).
-			Data().(string)
-	}
-}
-
-func removeJsonRoot(json string) string {
-	if json[0] == '$' && json != "$" {
-		return json[2:]
-	}
-	return json
-}
-
-func getParent(path string) string {
-	keys := strings.Split(path, ".")
-	parent := keys[:len(keys)-1]
-	return strings.Join(parent, ".")
 }

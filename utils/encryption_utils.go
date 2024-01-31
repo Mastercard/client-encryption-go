@@ -4,6 +4,7 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
+	"github.com/Jeffail/gabs/v2"
 	"golang.org/x/crypto/pkcs12"
 	"io/ioutil"
 	"os"
@@ -71,6 +72,25 @@ func LoadUnencryptedDecryptionKey(keyFilePath string) (*rsa.PrivateKey, error) {
 		return nil, err
 	}
 	return key.(*rsa.PrivateKey), nil
+}
+
+func GetPayloadToEncrypt(jsonPayload *gabs.Container, jsonPathIn string) string {
+	if jsonPathIn == "$" {
+		return jsonPayload.String()
+	} else {
+		return jsonPayload.Path(jsonPathIn).String()
+	}
+}
+
+func GetPayloadToDecrypt(jsonPayload *gabs.Container, jsonPathIn string) string {
+	if jsonPathIn == "$" {
+		return jsonPayload.
+			Children()[0].
+			Data().(string)
+	} else {
+		return jsonPayload.Path(jsonPathIn).
+			Data().(string)
+	}
 }
 
 // Read File
