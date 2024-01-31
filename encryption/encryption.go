@@ -32,16 +32,10 @@ func encryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPath
 		Kid: config.GetEncryptionKeyFingerprint(),
 		Cty: "application/json",
 	}
-	var payloadPath *gabs.Container
-	if jsonPathIn == "$" {
-		payloadPath = jsonPayload
-	} else {
-		if jsonPathIn[0] == '$' {
-			jsonPathIn = jsonPathIn[2:]
-		}
-		payloadPath = jsonPayload.Path(jsonPathIn)
-	}
-	payload, err := jwe.Encrypt(config, payloadPath.String(), joseHeader)
+	jsonPathIn = removeJsonRoot(jsonPathIn)
+	jsonPathOut = removeJsonRoot(jsonPathOut)
+	payloadToEncrypt := getPayloadToEncrypt(jsonPayload, jsonPathIn)
+	payload, err := jwe.Encrypt(config, payloadToEncrypt, joseHeader)
 	if err != nil {
 		panic(err)
 	}
@@ -62,19 +56,10 @@ func encryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPath
 }
 
 func decryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPathOut string, config jwe.JWEConfig) *gabs.Container {
-	var inJsonObject string
-	if jsonPathIn == "$" {
-		inJsonObject = jsonPayload.
-			Children()[0].
-			Data().(string)
-	} else {
-		if jsonPathIn[0] == '$' {
-			jsonPathIn = jsonPathIn[2:]
-		}
-		inJsonObject = jsonPayload.Path(jsonPathIn).
-			Data().(string)
-	}
-	jweObject, err := jwe.ParseJWEObject(inJsonObject)
+	jsonPathIn = removeJsonRoot(jsonPathIn)
+	jsonPathOut = removeJsonRoot(jsonPathOut)
+	encryptedPayload := getPayloadToDecrypt(jsonPayload, jsonPathIn)
+	jweObject, err := jwe.ParseJWEObject(encryptedPayload)
 	if err != nil {
 		panic(err)
 	}
@@ -93,6 +78,32 @@ func decryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPath
 		jsonPayload.SetP(jsonDecryptedPayload, jsonPathOut)
 	}
 	return jsonPayload
+}
+
+func getPayloadToEncrypt(jsonPayload *gabs.Container, jsonPathIn string) string {
+	if jsonPathIn == "$" {
+		return jsonPayload.String()
+	} else {
+		return jsonPayload.Path(jsonPathIn).String()
+	}
+}
+
+func getPayloadToDecrypt(jsonPayload *gabs.Container, jsonPathIn string) string {
+	if jsonPathIn == "$" {
+		return jsonPayload.
+			Children()[0].
+			Data().(string)
+	} else {
+		return jsonPayload.Path(jsonPathIn).
+			Data().(string)
+	}
+}
+
+func removeJsonRoot(json string) string {
+	if json[0] == '$' && json != "$" {
+		return json[2:]
+	}
+	return json
 }
 
 func getParent(path string) string {
