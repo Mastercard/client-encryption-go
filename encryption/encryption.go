@@ -3,10 +3,14 @@ package encryption
 import (
 	"github.com/Jeffail/gabs/v2"
 	"github.com/mastercard/client-encryption-go/jwe"
+	"github.com/mastercard/client-encryption-go/utils"
 )
 
 func EncryptPayload(payload string, config jwe.JWEConfig) string {
-	jsonPayload, _ := gabs.ParseJSON([]byte(payload))
+	jsonPayload, err := gabs.ParseJSON([]byte(payload))
+	if err != nil {
+		panic(err)
+	}
 	for jsonPathIn, jsonPathOut := range config.GetEncryptionPaths() {
 		jsonPayload = encryptPayloadPath(jsonPayload, jsonPathIn, jsonPathOut, config)
 	}
@@ -28,24 +32,31 @@ func encryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPath
 		Kid: config.GetEncryptionKeyFingerprint(),
 		Cty: "application/json",
 	}
-
-	payload, err := jwe.Encrypt(config, jsonPayload.String(), joseHeader)
+	jsonPathIn = utils.RemoveRoot(jsonPathIn)
+	jsonPathOut = utils.RemoveRoot(jsonPathOut)
+	payloadToEncrypt := utils.GetPayloadToEncrypt(jsonPayload, jsonPathIn)
+	payload, err := jwe.Encrypt(config, payloadToEncrypt, joseHeader)
 	if err != nil {
 		panic(err)
 	}
-
 	if jsonPathIn == "$" {
 		jsonPayload = gabs.New()
 	} else {
 		jsonPayload.DeleteP(jsonPathIn)
 	}
-	jsonPayload.Set(payload, config.GetEncryptedValueFieldName())
+	if jsonPathOut == "$" {
+		jsonPayload.SetP(payload, config.GetEncryptedValueFieldName())
+	} else {
+		jsonPayload.SetP(payload, jsonPathOut+"."+config.GetEncryptedValueFieldName())
+	}
 	return jsonPayload
 }
 
 func decryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPathOut string, config jwe.JWEConfig) *gabs.Container {
-	inJsonObject := jsonPayload.Path(jsonPathIn).Data().(string)
-	jweObject, err := jwe.ParseJWEObject(inJsonObject)
+	jsonPathIn = utils.RemoveRoot(jsonPathIn)
+	jsonPathOut = utils.RemoveRoot(jsonPathOut)
+	encryptedPayload := utils.GetPayloadToDecrypt(jsonPayload, jsonPathIn)
+	jweObject, err := jwe.ParseJWEObject(encryptedPayload)
 	if err != nil {
 		panic(err)
 	}
@@ -57,9 +68,8 @@ func decryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPath
 	if jsonPathOut == "$" {
 		jsonPayload = jsonDecryptedPayload
 	} else {
-		jsonPayload.DeleteP(jsonPathIn)
-		jsonPayload.Set(jsonDecryptedPayload, jsonPathOut)
+		jsonPayload.DeleteP(utils.GetParent(jsonPathIn))
+		jsonPayload.SetP(jsonDecryptedPayload, jsonPathOut)
 	}
-
 	return jsonPayload
 }
