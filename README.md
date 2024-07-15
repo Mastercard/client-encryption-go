@@ -43,7 +43,7 @@ import github.com/mastercard/client-encryption-go
 ```
 
 ### Loading the Encryption Certificate <a name="loading-the-encryption-certificate"></a>
-A `Certificate` can be created by calling the `utils.LoadSigningKey` function:
+A `Certificate` can be created by calling the `utils.LoadEncryptionCertificate` function:
 ```go
 import "github.com/mastercard/client-encryption-go/utils"
 
