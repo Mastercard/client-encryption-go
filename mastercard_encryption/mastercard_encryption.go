@@ -47,6 +47,10 @@ func encryptPayloadPath(jsonPayload *gabs.Container, jsonPathIn string, jsonPath
 		encryptedObject.Set(params.EncryptedKeyValue, config.GetEncryptedKeyFieldName())
 	}
 
+	if !utils.IsNullOrEmpty(config.GetEncryptionCertificateFingerprintFieldName()) {
+		encryptedObject.Set(config.GetEncryptionCertificateFingerprint(), config.GetEncryptionCertificateFingerprintFieldName())
+	}
+
 	if !utils.IsNullOrEmpty(config.GetEncryptionKeyFingerprintFieldName()) {
 		encryptedObject.Set(config.GetEncryptionKeyFingerprint(), config.GetEncryptionKeyFingerprintFieldName())
 	}
