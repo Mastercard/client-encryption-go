@@ -43,7 +43,7 @@ import github.com/mastercard/client-encryption-go
 ```
 
 ### Loading the Encryption Certificate <a name="loading-the-encryption-certificate"></a>
-A `Certificate` can be created by calling the `utils.LoadSigningKey` function:
+A `Certificate` can be created by calling the `utils.LoadEncryptionCertificate` function:
 ```go
 import "github.com/mastercard/client-encryption-go/utils"
 
@@ -302,7 +302,7 @@ import "github.com/mastercard/client-encryption-go/field_level_encryption"
 
 cb := field_level_encryption.NewFieldLevelEncryptionConfigBuilder()
 config, err := cb.WithDecryptionKey(decryptionKey).
-    WithCertificate(encryptionCertificate).
+    WithEncryptionCertificate(encryptionCertificate).
     WithEncryptionPath("$.path.to.foo", "$.path.to.encryptedFoo").
     WithDecryptionPath("$.path.to.encryptedFoo.encryptedData", "$.path.to.foo").
     WithEncryptedValueFieldName("encryptedData").
