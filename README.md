@@ -106,7 +106,7 @@ This library supports two types of encryption/decryption, both of which support 
 This library uses [JWE compact serialization](https://datatracker.ietf.org/doc/html/rfc7516#section-7.1) for the encryption of sensitive data.
 The core methods responsible for payload encryption and decryption are `EncryptPayload` and `DecryptPayload` in the `encryption` package.
 
-* `encryptPayload` usage:
+* `EncryptPayload` usage:
 ```go
 import "github.com/mastercard/client-encryption-go/encryption"
 // …
@@ -114,7 +114,7 @@ import "github.com/mastercard/client-encryption-go/encryption"
 encryptedPayload := encryption.EncryptPayload(payload, *config)
 ```
 
-* `decryptPayload` usage:
+* `DecryptPayload` usage:
 ```go
 import "github.com/mastercard/client-encryption-go/encryption"
 // …
@@ -255,7 +255,7 @@ Example:
 encryptedPayload := "{" +
     "  \"encryptedData\": \"eyJraWQiOiI3NjFiMDAzYzFlYWRlM….Y+oPYKZEMTKyYcSIVEgtQw\"" +
     "}"
-payload = encryption.decryptPayload(encryptedPayload, config)
+payload = encryption.DecryptPayload(encryptedPayload, config)
 ```
 
 Output:
@@ -277,7 +277,7 @@ Output:
 
 The core methods responsible for payload encryption and decryption are `EncryptPayload` and `DecryptPayload` in the `mastercard_encryption` package.
 
-* `encryptPayload` usage:
+* `EncryptPayload` usage:
 ```go
 import "github.com/mastercard/client-encryption-go/mastercard_encryption"
 // …
@@ -285,7 +285,7 @@ import "github.com/mastercard/client-encryption-go/mastercard_encryption"
 encryptedPayload := encryption.EncryptPayload(payload, *config)
 ```
 
-* `decryptPayload` usage:
+* `DecryptPayload` usage:
 ```go
 import "github.com/mastercard/client-encryption-go/mastercard_encryption"
 // …
