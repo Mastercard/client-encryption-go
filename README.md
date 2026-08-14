@@ -22,7 +22,7 @@
 Library for Mastercard API compliant payload encryption/decryption.
 
 ### Compatibility <a name="compatibility"></a>
-Go 1.23+
+Go 1.25+
 
 ### References <a name="references"></a>
 * [Securing Sensitive Data Using Payload Encryption](https://developer.mastercard.com/platform/documentation/security-and-authentication/securing-sensitive-data-using-payload-encryption/)
