@@ -2,9 +2,12 @@ package jwe
 
 import (
 	"crypto"
+	"crypto/hmac"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
+	"crypto/subtle"
+	"encoding/binary"
 	"errors"
 	"strings"
 
@@ -15,7 +18,7 @@ import (
 const (
 	A128CBC_HS256 = "A128CBC-HS256"
 	A256GCM       = "A256GCM"
-	A128GCM	      = "A128GCM"
+	A128GCM       = "A128GCM"
 	A192GCM       = "A192GCM"
 )
 
@@ -84,6 +87,11 @@ func (jweObject JWEObject) Decrypt(config JWEConfig) (string, error) {
 		}
 		return string(plainText), nil
 	case A128CBC_HS256:
+		if config.enableAuthTagVerification {
+			if err := verifyCbcAuthTag(cek, nonce, cipherText, authTag, aad); err != nil {
+				return "", err
+			}
+		}
 		plainText, err := aes_encryption.AesCbcDecrypt(cipherText, cek[16:], nonce, authTag)
 		if err != nil {
 			return "", err
@@ -93,6 +101,35 @@ func (jweObject JWEObject) Decrypt(config JWEConfig) (string, error) {
 	default:
 		return "", errors.New("Encryption method not supported")
 	}
+}
+
+func verifyCbcAuthTag(cek, nonce, cipherText, authTag, aad []byte) error {
+	if len(cek) != 32 {
+		return errors.New("invalid cek length for A128CBC-HS256")
+	}
+	macKeyLen := len(cek) / 2
+	macKey := cek[:macKeyLen]
+
+	if len(authTag) != 16 {
+		return errors.New("invalid authentication tag length")
+	}
+
+	al := make([]byte, 8)
+	binary.BigEndian.PutUint64(al, uint64(len(aad)*8))
+
+	mac := hmac.New(sha256.New, macKey)
+	mac.Write(aad)
+	mac.Write(nonce)
+	mac.Write(cipherText)
+	mac.Write(al)
+	expected := mac.Sum(nil)
+
+	expectedAuthTag := expected[:len(authTag)]
+	if subtle.ConstantTimeCompare(authTag, expectedAuthTag) != 1 {
+		return errors.New("invalid authentication tag")
+	}
+
+	return nil
 }
 
 func (jweObject JWEObject) Serialize() string {

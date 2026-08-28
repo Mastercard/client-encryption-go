@@ -8,15 +8,16 @@ import (
 )
 
 type JWEConfigBuilder struct {
-	decryptionKey            *rsa.PrivateKey
-	certificate              *x509.Certificate
-	encryptedValueFieldName  string
-	encryptionKey            *rsa.PublicKey
-	cek                      []byte
-	iv                       []byte
-	encryptionPaths          map[string]string
-	decryptionPaths          map[string]string
-	encryptionKeyFingerprint string
+	decryptionKey             *rsa.PrivateKey
+	certificate               *x509.Certificate
+	encryptedValueFieldName   string
+	encryptionKey             *rsa.PublicKey
+	cek                       []byte
+	iv                        []byte
+	encryptionPaths           map[string]string
+	decryptionPaths           map[string]string
+	encryptionKeyFingerprint  string
+	enableAuthTagVerification bool
 }
 
 func NewJWEConfigBuilder() *JWEConfigBuilder {
@@ -74,6 +75,11 @@ func (cb *JWEConfigBuilder) WithEncryptedValueFieldName(encryptedValueFieldName 
 	return cb
 }
 
+func (cb *JWEConfigBuilder) WithAuthTagVerificationEnabled(enableAuthTagVerification bool) *JWEConfigBuilder {
+	cb.enableAuthTagVerification = enableAuthTagVerification
+	return cb
+}
+
 func (cb *JWEConfigBuilder) computeKeyFingerprint() {
 	derEncoded, err := x509.MarshalPKIXPublicKey(cb.encryptionKey)
 	if err != nil {
@@ -91,14 +97,15 @@ func (cb *JWEConfigBuilder) Build() *JWEConfig {
 	}
 
 	return &JWEConfig{
-		decryptionKey:            cb.decryptionKey,
-		certificate:              cb.certificate,
-		encryptedValueFieldName:  cb.encryptedValueFieldName,
-		encryptionKey:            cb.encryptionKey,
-		cek:                      cb.cek,
-		iv:                       cb.iv,
-		encryptionPaths:          cb.encryptionPaths,
-		decryptionPaths:          cb.decryptionPaths,
-		encryptionKeyFingerprint: cb.encryptionKeyFingerprint,
+		decryptionKey:             cb.decryptionKey,
+		certificate:               cb.certificate,
+		encryptedValueFieldName:   cb.encryptedValueFieldName,
+		encryptionKey:             cb.encryptionKey,
+		cek:                       cb.cek,
+		iv:                        cb.iv,
+		encryptionPaths:           cb.encryptionPaths,
+		decryptionPaths:           cb.decryptionPaths,
+		encryptionKeyFingerprint:  cb.encryptionKeyFingerprint,
+		enableAuthTagVerification: cb.enableAuthTagVerification,
 	}
 }

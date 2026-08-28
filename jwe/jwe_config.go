@@ -6,15 +6,16 @@ import (
 )
 
 type JWEConfig struct {
-	decryptionKey            *rsa.PrivateKey
-	certificate              *x509.Certificate
-	encryptedValueFieldName  string
-	encryptionKey            *rsa.PublicKey
-	cek                      []byte
-	iv                       []byte
-	encryptionPaths          map[string]string
-	decryptionPaths          map[string]string
-	encryptionKeyFingerprint string
+	decryptionKey             *rsa.PrivateKey
+	certificate               *x509.Certificate
+	encryptedValueFieldName   string
+	encryptionKey             *rsa.PublicKey
+	cek                       []byte
+	iv                        []byte
+	encryptionPaths           map[string]string
+	decryptionPaths           map[string]string
+	encryptionKeyFingerprint  string
+	enableAuthTagVerification bool
 }
 
 func (config *JWEConfig) GetDecryptionKey() *rsa.PrivateKey {
